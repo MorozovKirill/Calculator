@@ -803,23 +803,23 @@ function credit_calculation(e) {
 		
 	}
 	
-	var fade = 1;
+	var fade = -1;
 	
-	if (overdraft_mounthly < current_rent) {
+	if (+overdraft_mounthly < +current_rent) {
 	
 		var decision = '<p>Если вы готовы ежемесячно платить ' + mounthly_payment.replace(/(\d)(?=(\d{3})+(\D|$))/g, "$1 ") + ' руб., берите кредит.</p><p>Это выгоднее, чем платить аренду.</p>';
 		fade = 1;
 	
 	}
 	
-	if (overdraft_mounthly > current_rent) {
+	if (+overdraft_mounthly > +current_rent) {
 	
 		var decision = '<p>Вы будете ежемесячно переплачивать за кредит больше, чем ваша текущая аренда.</p><p>Лучше продолжайте снимать и откладывайте деньги на депозит.</p>';
 		fade = 2;
 	
 	}
 
-	if (overdraft_mounthly == current_rent) {
+	if (+overdraft_mounthly == +current_rent) {
 	
 		var decision = '<p>Подкиньте моентку.</p><p>;)</p>';
 		fade = 3;
@@ -833,6 +833,13 @@ function credit_calculation(e) {
 	
 	}
 	
+	if ((fade == fade_flag) || (fade == 1)) {
+	
+		var conclusion = document.getElementById('conclusion');
+		conclusion.innerHTML = decision;
+		
+	}
+
 	if (fade != fade_flag) {
 	
 		var conclusion = document.getElementById('conclusion');
