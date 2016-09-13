@@ -49,6 +49,19 @@
 		}
 	}
 	
+	@keyframes fadein_text {
+		from {
+			color: rgba(0, 0, 0, 0);
+		}
+		to {
+			color: rgba(0, 0, 0, 1);
+		}
+	}
+
+	.fadein {
+		animation: fadein_text 0.5s 1 forwards;
+	}
+	
 	.play_validation_alert {
 		animation: validate_alert 0.1s 2 alternate;
 	}
@@ -358,7 +371,7 @@
 	
 <div style="clear: left;"></div>
 <div style="margin-top: 100px; margin-bottom: 100px; width: 1000px;">
-<h2><span id="conclusion"></span></h2>
+<h2><div id="conclusion" class="fadein"></div></h2>
 </div>
 
 </center>
@@ -379,6 +392,8 @@ var list_real_credit_amount = document.getElementById('real_credit_amount');
 var list_mounthly_payment = document.getElementById('mounthly_payment');
 var list_overdraft = document.getElementById('overdraft');
 var list_overdraft_mounthly = document.getElementById('overdraft_mounthly');
+
+var fade_flag = 0;
 		
 canvas_init();
 
@@ -788,32 +803,46 @@ function credit_calculation(e) {
 		
 	}
 	
+	var fade = 1;
+	
 	if (overdraft_mounthly < current_rent) {
 	
 		var decision = '<p>Если вы готовы ежемесячно платить ' + mounthly_payment.replace(/(\d)(?=(\d{3})+(\D|$))/g, "$1 ") + ' руб., берите кредит.</p><p>Это выгоднее, чем платить аренду.</p>';
+		fade = 1;
 	
 	}
 	
 	if (overdraft_mounthly > current_rent) {
 	
 		var decision = '<p>Вы будете ежемесячно переплачивать за кредит больше, чем ваша текущая аренда.</p><p>Лучше продолжайте снимать и откладывайте деньги на депозит.</p>';
+		fade = 2;
 	
 	}
 
 	if (overdraft_mounthly == current_rent) {
 	
 		var decision = '<p>Подкиньте моентку.</p><p>;)</p>';
+		fade = 3;
 	
 	}
 	
 	if (!overdraft_mounthly) {
 	
 		var decision = '<p>Проверьте правильность исходных данных.</p><p>Что-то явно не так.</p>';
+		fade = 4;
 	
 	}
 	
-	var conclusion = document.getElementById('conclusion');
-	conclusion.innerHTML = decision;
+	if (fade != fade_flag) {
+	
+		var conclusion = document.getElementById('conclusion');
+		conclusion.classList.remove('fadein');
+		conclusion.innerHTML = decision;
+		void conclusion.offsetWidth;
+		conclusion.classList.add('fadein');
+		fade_flag = fade;
+		
+	}
 
 }
 
@@ -860,17 +889,22 @@ function input_validate_number(e) {
 
 		// проверка на ввод второй '.' или ','
 			
-		if ((chr == '.' || chr == ',') && (e.target.name == 'credit_percent')) {
+		if ((chr == '.') && (e.target.name == 'credit_percent')) {
+		
 		var result = e.target.value.match(/[.,]/g);
 
 			if (result != null && result.length > 0) {
+		
 				input_animate_validation(e);
 				e.preventDefault();
+			
 			}
 			
 		} else {
+		
 		input_animate_validation(e);
 		e.preventDefault();
+		
 		}
 	}
 }
